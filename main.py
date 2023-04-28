@@ -13,6 +13,7 @@ def read_file() -> object:
 
     print(f"Valor do dado:", sheet_ranges['D18'].value)
 
+    # Return
     return filename
 
 read_file()
