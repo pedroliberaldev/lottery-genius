@@ -11,7 +11,7 @@ def read_file() -> object:
     workbook = load_workbook(filename)
     sheet_ranges = workbook["Sheet1"]
 
-    print(sheet_ranges['D18'].value)
+    print(f"Valor do dado:", sheet_ranges['D18'].value)
 
     return filename
 
