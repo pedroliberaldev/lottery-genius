@@ -16,11 +16,20 @@ def read_file() -> object:
 
 
 def create_data(file_workbook) -> object:
-    # Create the new workbook, select and rename the active sheet and then save the new workbook
+    # Create the new workbook, select and rename the active sheet
     new_workbook = Workbook()
     new_sheet = new_workbook.active
     new_sheet.title = "Data"
-    new_workbook.save("recurrence.xlsx")
+
+    for interactor in range(1, 62):
+        current_a_collumn = "A" + str(interactor)
+        current_b_collumn = "B" + str(interactor)
+
+        if (interactor == 1):
+            new_sheet[current_a_collumn] = "Numbers"
+            new_sheet[current_b_collumn] = "Recurrence"
+        else:
+            new_sheet[current_a_collumn] = interactor - 1
 
     # Access file workbook sheet and checks the total number of draws made
     file_sheet = file_workbook["Sheet1"]
@@ -28,21 +37,16 @@ def create_data(file_workbook) -> object:
 
     for row in file_sheet.iter_rows(min_row=2, min_col=3, max_col=8, max_row=draws_total, values_only=True):
         for cell in row:
-            target_cell = "B" + str(cell)
-            print('target')
-            print(new_sheet[target_cell].value)
+            target_cell = "B" + str(cell + 1)
             check_cell_value = new_sheet[target_cell].value
-            print(check_cell_value)
 
             if (str(check_cell_value) == 'None') or (str(check_cell_value) == 'none'):
-                print('entrei')
                 new_sheet[target_cell] = 1
-                check_cell_value2 = new_sheet[target_cell].value
-                print(check_cell_value2)
             else:
-                print('else')
-                #new_sheet[target_cell] = int(new_sheet[target_cell]) + cell
-                print(new_sheet[target_cell])
-                print('fim')
+                new_sheet[target_cell] = int(new_sheet[target_cell].value) + 1
+
+    # Save the new workbook
+    filename: str = os.path.join(os.getcwd(), "results_file", "recurrence.xlsx")
+    new_workbook.save(filename)
 
     return new_workbook
