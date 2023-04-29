@@ -1,0 +1,3 @@
+- Verify how to sync xlsx file
+- Define values storage method
+- Create array to 10 top values and 40 others values
