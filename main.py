@@ -5,6 +5,7 @@ from openpyxl.utils import exceptions
 
 import os
 import httpx
+import random
 import logging
 import requests
 
@@ -172,9 +173,36 @@ def create_data_sorted(file_workbook: object) -> object:
         return False
 
 
+def create_game(recurrence_sorted_numbers):
+    my_game = []
+    low_limit = 1
+    high_limit = 60
+    high_recurrence_numbers = 0
+    low_recurrence_numbers = 0
+
+
+    while len(my_game) < 6:
+        random_number = random.randint(low_limit, high_limit)
+
+        if random_number not in my_game:
+            if random_number in recurrence_sorted_numbers[:20]:
+                if high_recurrence_numbers < 4:
+                    my_game.append(random_number)
+                    high_recurrence_numbers += 1
+            else:
+                if low_recurrence_numbers < 2:
+                    my_game.append(random_number)
+                    low_recurrence_numbers += 1
+
+    print(my_game)
+
+    return my_game
+
+
 url = "https://redeloteria.com.br/mega-sena/todos-os-resultados-da-mega-sena/29275"
 download_file_out(url, output_path=os.path.join(os.getcwd(), "results_file", "downloaded_results.xlsx"))
 
 returned_workbook = read_file()
 recurrence_workbook = create_data(returned_workbook)
-lottery_sorted_numbers = create_data_sorted(recurrence_workbook)
+recurrence_sorted_numbers = create_data_sorted(recurrence_workbook)
+final_game = create_game(recurrence_sorted_numbers)
