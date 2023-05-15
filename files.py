@@ -1,6 +1,19 @@
 from openpyxl import load_workbook
 from openpyxl import Workbook
 import os
+import httpx
+
+
+def download_file(url, output_path):
+    with httpx.Client() as client:
+        response = client.get(url)
+
+        if response.status_code == 200:
+            with open(output_path, "wb") as file:
+                file.write(response.content)
+            print("Download concluído.")
+        else:
+            print("Falha ao fazer o download.")
 
 
 def read_file() -> object:
