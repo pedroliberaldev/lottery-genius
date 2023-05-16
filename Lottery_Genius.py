@@ -82,34 +82,29 @@ def download_file_out(url, output_path):
             print("Falha ao fazer o download.")
 
 
+# Function to read the xlsx with lottery results history
 def read_file() -> object:
-    """
-
-    :rtype: object
-    """
     try:
         # Get the current path to set the filename and create a new workbook to importing data
         filename: str = os.path.join(os.getcwd(), "results_file", "results.xlsx")
         file_workbook = load_workbook(filename)
 
+        # Return the generated workbook
         return file_workbook
+    # Exception in case of can not read the file
     except exceptions.InvalidFileException:
-        print("Can not read results file")
         logging.error("Can not read the workbook file")
-
         return False
 
 
+# Function to create the recurrence xlsx file. This file will be used to select best numbers
 def create_data(file_workbook: object) -> object:
-    """
-
-    :type file_workbook: object
-    """
     # Create the new workbook, select and rename the active sheet
     new_workbook = Workbook()
     new_sheet = new_workbook.active
     new_sheet.title = "Data"
 
+    # Define the base structure of new workbook (B1 and all A column)
     for interactor in range(1, 62):
         current_a_collumn = "A" + str(interactor)
         current_b_collumn = "B" + str(interactor)
@@ -124,6 +119,7 @@ def create_data(file_workbook: object) -> object:
     file_sheet = file_workbook["Sheet1"]
     draws_total = file_sheet['A2'].value
 
+    # Navigate file workbook and count the recurrence of all numbers
     for row in file_sheet.iter_rows(min_row=2, min_col=3, max_col=8, max_row=draws_total, values_only=True):
         for cell in row:
             target_cell = "B" + str(cell + 1)
@@ -138,9 +134,11 @@ def create_data(file_workbook: object) -> object:
     filename: str = os.path.join(os.getcwd(), "results_file", "recurrence.xlsx")
     new_workbook.save(filename)
 
+    # Return the recurrence workbook
     return new_workbook
 
 
+# Function to create the sorted array with lottery history numbers
 def create_data_sorted(file_workbook: object) -> object:
     got_numbers = []
 
@@ -148,6 +146,7 @@ def create_data_sorted(file_workbook: object) -> object:
         # Access file workbook sheet and checks the total number of draws made
         file_sheet = file_workbook["Data"]
 
+        # Get all workbook numbers
         for row in file_sheet.iter_rows(min_row=2, min_col=1, max_row=61, values_only=True):
             for cell in row:
                 target_cell = "B" + str(cell + 1)
@@ -161,41 +160,52 @@ def create_data_sorted(file_workbook: object) -> object:
         # Order original array and get indexes
         sorted_arrays = sorted(range(len(got_numbers)), key=lambda i: got_numbers[i])
 
-        # Indexes inverter
+        # Inverter indexes
         inverted_sorted_arrays = sorted_arrays[::-1]
 
         # Create the final array
         sorted_numbers = [i + 1 for i in inverted_sorted_arrays]
 
+        # Return the final and sorted array
         return sorted_numbers
     except exceptions.InvalidFileException:
         logging.error("Can not create sorted array")
         return False
 
 
-def create_game(recurrence_sorted_numbers):
+# Function to create the lottery game based on users choices
+def create_game(sorted_numbers, total_of_balls, total_of_best_numbers, qtd_high_recurrence_numbers):
+    # The final game numbers array
     my_game = []
+
+    # Low and high limits os lottery numbers
     low_limit = 1
     high_limit = 60
+
+    # Counters to the numbers of high and low recurrence numbers
     high_recurrence_numbers = 0
     low_recurrence_numbers = 0
 
+    # Define how many low recurrence balls should be randomized
+    qtd_low_recurrence_numbers = total_of_balls - qtd_high_recurrence_numbers
 
-    while len(my_game) < 6:
+    while len(my_game) < total_of_balls:
         random_number = random.randint(low_limit, high_limit)
 
         if random_number not in my_game:
-            if random_number in recurrence_sorted_numbers[:20]:
-                if high_recurrence_numbers < 4:
+            if random_number in sorted_numbers[:total_of_best_numbers]:
+                if high_recurrence_numbers < qtd_high_recurrence_numbers:
                     my_game.append(random_number)
                     high_recurrence_numbers += 1
             else:
-                if low_recurrence_numbers < 2:
+                if low_recurrence_numbers < qtd_low_recurrence_numbers:
                     my_game.append(random_number)
                     low_recurrence_numbers += 1
 
-    print(my_game)
+    # Sort the game numbers
+    my_game = sorted(my_game)
 
+    # Return the final game numbers
     return my_game
 
 
@@ -205,4 +215,4 @@ download_file_out(url, output_path=os.path.join(os.getcwd(), "results_file", "do
 returned_workbook = read_file()
 recurrence_workbook = create_data(returned_workbook)
 recurrence_sorted_numbers = create_data_sorted(recurrence_workbook)
-final_game = create_game(recurrence_sorted_numbers)
+final_game = create_game(recurrence_sorted_numbers, 6, 20, 4)
