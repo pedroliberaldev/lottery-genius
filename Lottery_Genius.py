@@ -4,82 +4,80 @@ from openpyxl import Workbook
 from openpyxl.utils import exceptions
 
 import os
-import httpx
 import random
 import logging
 import requests
 
 
-def download_file():
+# Function to download a xlsx file with all results
+def download_file(url, output_path):
     headers = {
-        'authority': 'pagead2.googlesyndication.com',
-        'accept': '*/*',
-        'accept-language': 'pt-BR,pt;q=0.9',
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-        'referer': 'https://googleads.g.doubleclick.net/',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'pt-BR,pt;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Origin': 'https://asloterias.com.br',
+        'Pragma': 'no-cache',
+        'Referer': 'https://asloterias.com.br/download-todos-resultados-mega-sena',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
         'sec-ch-ua': '"Google Chrome";v="113", "Chromium";v="113", "Not-A.Brand";v="24"',
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"Linux"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'no-cors',
-        'sec-fetch-site': 'cross-site',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari\
-                      /537.36',
-        'x-client-data': 'CIy2yQEIo7bJAQipncoBCIeQywEIk6HLAQiHoM0BCO2qzQE=',
     }
 
-    response = requests.get(
-        'https://pagead2.googlesyndication.com/pcs/activeview?xai=AKAOjssAbbL3BLsdFcIODXnOe2vbXCZoMtw-ZMZ39XLUt68YT1ugW\
-        ZPFN0y1z6SGe21_c0aSDTGv7LRfWiQALrZyvUt7YVRUjwpKxlZyedx4D8Qk6_pGPSzmSjKlcKp4yCjz9JRP5IzMmA&sai=AMfl-YS3RF3sP-25u\
-        C09_dOs6qFL81WMFHtoNrbVOHCpS4fnc4k1vUi5E2zfLxE2tCHBe-UbT5F8FEu1EMIkknZ6Afm2fz_2ghd4Lvnc1-xuqO_4Bqg458l4KB09GTEG\
-        S93BJALhGQ&sig=Cg0ArKJSzBdbBorEHXtUEAE&id=lidar2&mcvt=1004&p=1,0,281.015625,1058.015625&mtos=0,0,978,1004,2782&\
-        tos=0,0,978,26,3908&v=20230510&bin=7&avms=nio&bs=0,0&mc=0.56&if=1&vu=1&app=0&itpl=22&adk=281220856&rs=2&la=1&cr\
-        =0&uach=WyJMaW51eCIsIjYuMi4xNSIsIng4NiIsIiIsIjExMy4wLjU2NzIuOTIiLFtdLDAsbnVsbCwiNjQiLFtbIkdvb2dsZSBDaHJvbWUiLCI\
-        xMTMuMC41NjcyLjkyIl0sWyJDaHJvbWl1bSIsIjExMy4wLjU2NzIuOTIiXSxbIk5vdC1BLkJyYW5kIiwiMjQuMC4wLjAiXV0sMF0%3D&vs=4&r=\
-        v&rst=1684167594463&rpt=2125&met=mue&wmsd=0&pbe=0&vae=0&spb=0',
-        headers=headers,
-    )
-
-
-def download_file_out(url, output_path):
-    headers = {
-        'authority': 'pagead2.googlesyndication.com',
-        'accept': '*/*',
-        'accept-language': 'pt-BR,pt;q=0.9',
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-        'referer': 'https://googleads.g.doubleclick.net/',
-        'sec-ch-ua': '"Google Chrome";v="113", "Chromium";v="113", "Not-A.Brand";v="24"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Linux"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'no-cors',
-        'sec-fetch-site': 'cross-site',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0Safari\
-                      /537.36',
-        'x-client-data': 'CIy2yQEIo7bJAQipncoBCIeQywEIk6HLAQiHoM0BCO2qzQE=',
+    data = {
+        'l': 'ms',
+        't': 't',
+        'o': 's',
+        'f1': '',
+        'f2': '',
     }
 
-    with httpx.Client() as client:
-        response = client.get(
-            'https://pagead2.googlesyndication.com/pcs/activeview?xai=AKAOjssAbbL3BLsdFcIODXnOe2vbXCZoMtw-ZMZ39XLUt68YT\
-            1ugWZPFN0y1z6SGe21_c0aSDTGv7LRfWiQALrZyvUt7YVRUjwpKxlZyedx4D8Qk6_pGPSzmSjKlcKp4yCjz9JRP5IzMmA&sai=AMfl-YS3R\
-            F3sP-25uC09_dOs6qFL81WMFHtoNrbVOHCpS4fnc4k1vUi5E2zfLxE2tCHBe-UbT5F8FEu1EMIkknZ6Afm2fz_2ghd4Lvnc1-xuqO_4Bqg4\
-            58l4KB09GTEGS93BJALhGQ&sig=Cg0ArKJSzBdbBorEHXtUEAE&id=lidar2&mcvt=1004&p=1,0,281.015625,1058.015625&mtos=0,\
-            0,978,1004,2782&tos=0,0,978,26,3908&v=20230510&bin=7&avms=nio&bs=0,0&mc=0.56&if=1&vu=1&app=0&itpl=22&adk=28\
-            1220856&rs=2&la=1&cr=0&uach=WyJMaW51eCIsIjYuMi4xNSIsIng4NiIsIiIsIjExMy4wLjU2NzIuOTIiLFtdLDAsbnVsbCwiNjQiLFt\
-            bIkdvb2dsZSBDaHJvbWUiLCIxMTMuMC41NjcyLjkyIl0sWyJDaHJvbWl1bSIsIjExMy4wLjU2NzIuOTIiXSxbIk5vdC1BLkJyYW 5kIiwiM\
-            jQuMC4wLjAiXV0sMF0%3D&vs=4&r=v&rst=1684167594463&rpt=2125&met=mue&wmsd=0&pbe=0&vae=0&spb=0',
-            headers=headers,
-        )
+    response = requests.post('https://asloterias.com.br/download_excel.php', headers=headers, data=data)
 
-        if response.status_code == 200:
-            with open(output_path, "wb") as file:
-                file.write(response.content)
+    if response.status_code == 200:
+        with open(output_path, "wb") as file:
+            file.write(response.content)
             print("Download concluído.")
-        else:
-            print("Falha ao fazer o download.")
+    else:
+        print("Falha ao fazer o download.")
+
+
+def adjust_file() -> object:
+    try:
+        # Get the current path to set the filename and create a new workbook to importing data
+        filename: str = os.path.join(os.getcwd(), "results_file", "downloaded_results.xlsx")
+        file_workbook = load_workbook(filename)
+
+        # Load and rename sheet
+        old_sheet = file_workbook['mega_sena_www.asloterias.com.br']
+        old_sheet.title = 'Data'
+
+        # Delete unused rows
+        old_sheet.delete_rows(1, 6)
+
+        # If have results file, rename it
+        old_file: str = os.path.join(os.getcwd(), "results_file", "results.xlsx")
+
+        if os.path.exists(old_file):
+            old_workbook = load_workbook(old_file)
+            old_workbook.save(os.path.join(os.getcwd(), "results_file", "results_old.xlsx"))
+
+        # Save workbook
+        file_workbook.save(os.path.join(os.getcwd(), "results_file", "results.xlsx"))
+
+        # Return the generated workbook
+        return file_workbook
+    # Exception in case of can not read the file
+    except exceptions.InvalidFileException:
+        logging.error("Can not save the workbook file")
+        return False
 
 
 # Function to read the xlsx with lottery results history
@@ -116,11 +114,11 @@ def create_data(file_workbook: object) -> object:
             new_sheet[current_a_collumn] = interactor - 1
 
     # Access file workbook sheet and checks the total number of draws made
-    file_sheet = file_workbook["Sheet1"]
-    draws_total = file_sheet['A2'].value
+    file_sheet = file_workbook["Data"]
+    draws_total = file_sheet['A8'].value
 
     # Navigate file workbook and count the recurrence of all numbers
-    for row in file_sheet.iter_rows(min_row=2, min_col=3, max_col=8, max_row=draws_total, values_only=True):
+    for row in file_sheet.iter_rows(min_row=8, min_col=3, max_col=8, max_row=draws_total, values_only=True):
         for cell in row:
             target_cell = "B" + str(cell + 1)
             check_cell_value = new_sheet[target_cell].value
@@ -209,9 +207,9 @@ def create_game(sorted_numbers, total_of_balls, total_of_best_numbers, qtd_high_
     return my_game
 
 
-url = "https://redeloteria.com.br/mega-sena/todos-os-resultados-da-mega-sena/29275"
-download_file_out(url, output_path=os.path.join(os.getcwd(), "results_file", "downloaded_results.xlsx"))
-
+url = "https://asloterias.com.br/download-todos-resultados-mega-sena"
+download_file(url, output_path=os.path.join(os.getcwd(), "results_file", "downloaded_results.xlsx"))
+adjust_file()
 returned_workbook = read_file()
 recurrence_workbook = create_data(returned_workbook)
 recurrence_sorted_numbers = create_data_sorted(recurrence_workbook)
